@@ -1,0 +1,16 @@
+{
+    "name": "com.kierancoppins.environment-query-system",
+    "version": "1.0.0",
+    "displayName": "Environment Query System",
+    "description": "Based on Unreal Engine's EQS, this package allows you to create queries to find the best location in your scene based on a set of rules.",
+    "unity": "2023.2",
+    "unityRelease": "6f1",
+    "author": {
+        "name": "Kieran Coppins",
+        "url": "https://kierancoppins.com"
+    },
+    "repository": "foo",
+    "changelogUrl": "foo",
+    "documentationUrl": "foo",
+    "licensesUrl": "foo"
+}
