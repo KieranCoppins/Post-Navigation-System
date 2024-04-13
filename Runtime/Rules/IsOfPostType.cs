@@ -8,26 +8,31 @@ namespace KieranCoppins.PostNavigation
     /// <summary>
     /// A destructive rule that removes any posts that are not of the given type
     /// </summary>
-    public class IsOfPostType : PostRule
+    public class IsOfPostType : IPostRule
     {
         /// <summary>
         /// The type of post that we want to make sure we have
         /// </summary>
         private readonly Type postType;
 
+        float IPostRule.Weight { get => weight; set => weight = value; }
+        private float weight;
+        bool IPostRule.NormaliseScore { get => normaliseScore; set => normaliseScore = value; }
+        private bool normaliseScore;
+
         /// <summary>
         /// Create a new IsOfPostType rule
         /// </summary>
         /// <param name="postType">The type of post that we want to make sure we have</param>
-        public IsOfPostType(Type postType) : base(0, true)
+        public IsOfPostType(Type postType)
         {
             this.postType = postType;
         }
 
-        public override Dictionary<Post, float> Run(Dictionary<Post, float> scores)
+        Dictionary<IPost, float> IPostRule.Run(Dictionary<IPost, float> scores)
         {
-            Dictionary<Post, float> baseScores = new Dictionary<Post, float>();
-            foreach (KeyValuePair<Post, float> score in scores)
+            Dictionary<IPost, float> baseScores = new Dictionary<IPost, float>();
+            foreach (KeyValuePair<IPost, float> score in scores)
             {
                 if (score.Key.GetType() == postType)
                 {
@@ -35,8 +40,8 @@ namespace KieranCoppins.PostNavigation
                 }
             }
 
-            Dictionary<Post, float> newScores = new Dictionary<Post, float>();
-            foreach (KeyValuePair<Post, float> score in baseScores)
+            Dictionary<IPost, float> newScores = new Dictionary<IPost, float>();
+            foreach (KeyValuePair<IPost, float> score in baseScores)
             {
                 newScores[score.Key] = score.Value + scores[score.Key];
             }

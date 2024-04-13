@@ -12,7 +12,7 @@ namespace KieranCoppins.PostNavigation
     [ExecuteInEditMode]
     public class PostDebugVisualiser : MonoBehaviour
     {
-        private Post[] generatedPosts;
+        private IPost[] generatedPosts;
         void OnEnable()
         {
             generatedPosts = PostGenerators.GetPostFromSceneData();
@@ -22,20 +22,19 @@ namespace KieranCoppins.PostNavigation
         {
             if (!enabled) return;
 
-            foreach (Post post in generatedPosts)
+            foreach (IPost post in generatedPosts)
             {
-                if (post.GetType() == typeof(OpenPost))
+                if (post is IOpenPost openPost)
                 {
                     Gizmos.color = Color.green;
-                    Gizmos.DrawSphere(post, 0.1f);
+                    Gizmos.DrawSphere(openPost.ToVector3(), 0.1f);
                 }
-                else if (post.GetType() == typeof(CoverPost))
+                else if (post is ICoverPost coverPost)
                 {
-                    CoverPost coverPost = (CoverPost)post;
                     Gizmos.color = Color.red;
-                    Gizmos.DrawCube(post, new Vector3(.2f, 2f, .2f));
+                    Gizmos.DrawCube(post.ToVector3(), new Vector3(.2f, 2f, .2f));
                     Gizmos.color = Color.magenta;
-                    Vector3 coverRayOrigin = coverPost + Vector3.up;
+                    Vector3 coverRayOrigin = post.ToVector3() + Vector3.up;
                     Vector3 coverDirection = Vector3.Cross(coverPost.CoverDirection, Vector3.up);
                     Gizmos.DrawRay(coverRayOrigin, coverPost.CoverDirection);
                     if (coverPost.CanPeakLeft)
@@ -53,6 +52,7 @@ namespace KieranCoppins.PostNavigation
                 else
                 {
                     Gizmos.color = Color.white;
+                    Gizmos.DrawSphere(post.ToVector3(), 0.1f);
                 }
             }
         }

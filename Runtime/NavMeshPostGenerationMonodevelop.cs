@@ -15,7 +15,7 @@ namespace KieranCoppins.PostNavigation
         [MenuItem("Tools/Navigation/Generate Posts For NavMesh")]
         private static void GeneratePostsForNavMesh()
         {
-            Post[] posts = PostGenerators.GenerateFromNavMesh(new NavMeshPostGenerationConfig());
+            IPost[] posts = PostGenerators.GenerateFromNavMesh(new NavMeshPostGenerationConfig());
             PostData postData = PostData.CreateInstance(posts);
             AssetDatabase.CreateAsset(postData, $"{SceneManager.GetActiveScene().path.Replace(".unity", "")}/Posts.asset");
         }

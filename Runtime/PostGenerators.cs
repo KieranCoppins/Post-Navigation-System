@@ -71,21 +71,21 @@ namespace KieranCoppins.PostNavigation
         /// <param name="heightCount">The amount of posts to generate in the Z</param>
         /// <param name="spacing">The spacing between each post</param>
         /// <returns></returns>
-        public static Post[] GenerateGrid(Vector3 origin, float widthCount, float heightCount, float spacing)
+        public static IPost[] GenerateGrid(Vector3 origin, float widthCount, float heightCount, float spacing)
         {
             // Create a grid of points around the position
-            List<Post> points = new();
+            List<IPost> points = new();
 
             for (float x = (-widthCount / 2f) + .5f; x < (widthCount / 2f) + .5f; x++)
             {
                 for (float y = (-heightCount / 2f) + .5f; y < (heightCount / 2f) + .5f; y++)
                 {
                     Vector3 point = new Vector3(x * spacing, 0, y * spacing) + origin;
-                    points.AddRange(FindFloors(point).Select(floor => new Post(floor)));
+                    points.AddRange(FindFloors(point).Select(floor => new InternalPost(floor)));
                 }
             }
 
-            points.Add(new Post(origin));
+            points.Add(new InternalPost(origin));
 
             return points.ToArray();
         }
@@ -98,9 +98,9 @@ namespace KieranCoppins.PostNavigation
         /// <param name="radius">The radius from the origin for post generation</param>
         /// <param name="postSpacing">The spacing between each post within the radius</param>
         /// <returns></returns>
-        public static Post[] GenerateCircle(Vector3 origin, float radius, int postSpacing)
+        public static IPost[] GenerateCircle(Vector3 origin, float radius, int postSpacing)
         {
-            List<Post> posts = new();
+            List<IPost> posts = new();
 
             // Generate a filled grid of points within the radius of the origin
             for (float x = -radius; x < radius; x++)
@@ -110,7 +110,7 @@ namespace KieranCoppins.PostNavigation
                     Vector3 point = new Vector3(x * postSpacing, 0, z * postSpacing) + origin;
                     if (Vector3.Distance(origin, point) < radius)
                     {
-                        posts.AddRange(FindFloors(point).Select(floor => new Post(floor)));
+                        posts.AddRange(FindFloors(point).Select(floor => new InternalPost(floor)));
                     }
                 }
             }
@@ -123,14 +123,14 @@ namespace KieranCoppins.PostNavigation
         /// </summary>
         /// <param name="config">The configuration for this post generation</param>
         /// <returns></returns>
-        internal static Post[] GenerateFromNavMesh(NavMeshPostGenerationConfig config)
+        internal static IPost[] GenerateFromNavMesh(NavMeshPostGenerationConfig config)
         {
             NavMeshTriangulation navmeshData = NavMesh.CalculateTriangulation();
             Mesh mesh = new Mesh();
             mesh.SetVertices(navmeshData.vertices.ToList());
             mesh.SetIndices(navmeshData.indices, MeshTopology.Triangles, 0);
 
-            List<Post> posts = new();
+            List<IPost> posts = new();
 
             for (int i = 0; i < mesh.triangles.Length; i += 3)
             {
@@ -143,7 +143,7 @@ namespace KieranCoppins.PostNavigation
                 Vector3 center = (A + B + C) / 3f;
 
                 // Create open posts at the center of each triangle in the navmesh
-                posts.Add(new OpenPost(center));
+                posts.Add(new InternalOpenPost(center));
 
                 // Walk around the edge of the triangle and use raycasts to determine if there is a wall
                 Vector3[] edgePoints = { A, B, C, A };
@@ -168,7 +168,13 @@ namespace KieranCoppins.PostNavigation
                         counter++;
                     }
                 }
+            }
 
+            // Add any custom posts to the list
+            GameObject[] gameObjects = SceneManager.GetActiveScene().GetRootGameObjects();
+            foreach (var rootObject in gameObjects)
+            {
+                posts.AddRange(rootObject.GetComponentsInChildren<ICustomPost>().Select(customPost => customPost.ToSerializableObject()));
             }
 
             return posts.ToArray();
@@ -179,7 +185,7 @@ namespace KieranCoppins.PostNavigation
         /// Gets the post data from the asset saved in the active scenes folder directory
         /// </summary>
         /// <returns>The posts that have been generated previously</returns>
-        public static Post[] GetPostFromSceneData()
+        public static IPost[] GetPostFromSceneData()
         {
             PostData data = AssetDatabase.LoadAssetAtPath<PostData>($"{SceneManager.GetActiveScene().path.Replace(".unity", "")}/Posts.asset");
             if (data == null)
@@ -247,7 +253,7 @@ namespace KieranCoppins.PostNavigation
             return areaPBC * A.y + areaPCA * B.y + areaPAB * C.y;
         }
 
-        private static void CalculateCoverRaycast(in List<Post> currentPosts, Vector3 point, Vector3 rayDirection, float length, float peakWidth, float agentHeight)
+        private static void CalculateCoverRaycast(in List<IPost> currentPosts, Vector3 point, Vector3 rayDirection, float length, float peakWidth, float agentHeight)
         {
             Vector3 highCoverOffset = agentHeight * 0.75f * Vector3.up;
             Vector3 lowCoverOffset = agentHeight * 0.25f * Vector3.up;
@@ -260,7 +266,7 @@ namespace KieranCoppins.PostNavigation
                     bool canPeakRight = !Physics.Raycast(point + highCoverOffset + (-coverDirection * peakWidth), rayDirection, 5);
                     if (canPeakLeft || canPeakRight)
                     {
-                        currentPosts.Add(new CoverPost(point, CoverType.High, rayDirection, canPeakLeft, canPeakRight));
+                        currentPosts.Add(new InternalCoverPost(point, CoverType.High, rayDirection, canPeakLeft, canPeakRight));
                     }
                 }
                 else
@@ -270,7 +276,7 @@ namespace KieranCoppins.PostNavigation
                     bool canPeakOver = !Physics.Raycast(point + highCoverOffset, rayDirection, 5);
                     if (canPeakOver)
                     {
-                        currentPosts.Add(new CoverPost(point, CoverType.Low, rayDirection, canPeakLeft, canPeakRight));
+                        currentPosts.Add(new InternalCoverPost(point, CoverType.Low, rayDirection, canPeakLeft, canPeakRight));
                     }
                 }
             }

@@ -5,18 +5,18 @@ using UnityEngine;
 namespace KieranCoppins.PostNavigation
 {
     [System.Serializable]
-    public class PostData : ScriptableObject
+    internal class PostData : ScriptableObject
     {
         /// <summary>
         /// The posts in the data
         /// </summary>
-        public Post[] Posts { get => posts.ToArray(); }
+        public IPost[] Posts { get => posts.ToArray(); }
 
-        [SerializeReference] private List<Post> posts;
+        [SerializeReference] private List<IPost> posts;
 
         private PostData() { }
 
-        public static PostData CreateInstance(Post[] posts)
+        public static PostData CreateInstance(IPost[] posts)
         {
             PostData postData = ScriptableObject.CreateInstance<PostData>();
             postData.posts = new(posts);

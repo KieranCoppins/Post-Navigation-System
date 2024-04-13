@@ -8,7 +8,7 @@ namespace KieranCoppins.PostNavigation
     /// <summary>
     /// A destructive rule that will remove any posts that are not in cover to the target
     /// </summary>
-    public class IsInCover : PostRule
+    public class IsInCover : IPostRule
     {
         /// <summary>
         /// The target to check cover against
@@ -20,31 +20,36 @@ namespace KieranCoppins.PostNavigation
         /// </summary>
         private readonly float dot;
 
+        float IPostRule.Weight { get => weight; set => weight = value; }
+        private float weight;
+        bool IPostRule.NormaliseScore { get => normaliseScore; set => normaliseScore = value; }
+        private bool normaliseScore;
+
         /// <summary>
         /// Create a new IsInCover rule
         /// </summary>
         /// <param name="target">The target to check cover against</param>
         /// <param name="dot">The dot product threshold to check against</param>
-        public IsInCover(Transform target, float dot) : base(0, true)
+        public IsInCover(Transform target, float dot)
         {
             this.target = target;
             this.dot = dot;
         }
 
-        public override Dictionary<Post, float> Run(Dictionary<Post, float> scores)
+        Dictionary<IPost, float> IPostRule.Run(Dictionary<IPost, float> scores)
         {
-            Dictionary<Post, float> baseScores = new Dictionary<Post, float>();
-            foreach (KeyValuePair<Post, float> score in scores)
+            Dictionary<IPost, float> baseScores = new Dictionary<IPost, float>();
+            foreach (KeyValuePair<IPost, float> score in scores)
             {
-                Vector3 direction = target.position - score.Key;
-                if (score.Key is CoverPost coverPost && Vector3.Dot(coverPost.CoverDirection.normalized, direction.normalized) > dot)
+                Vector3 direction = target.position - score.Key.ToVector3();
+                if (score.Key is ICoverPost coverPost && Vector3.Dot(coverPost.CoverDirection.normalized, direction.normalized) > dot)
                 {
                     baseScores[score.Key] = weight;
                 }
             }
 
-            Dictionary<Post, float> newScores = new Dictionary<Post, float>();
-            foreach (KeyValuePair<Post, float> score in baseScores)
+            Dictionary<IPost, float> newScores = new Dictionary<IPost, float>();
+            foreach (KeyValuePair<IPost, float> score in baseScores)
             {
                 newScores[score.Key] = score.Value + scores[score.Key];
             }
