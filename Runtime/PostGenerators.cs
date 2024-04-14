@@ -37,9 +37,9 @@ namespace KieranCoppins.PostNavigation
         public NavMeshPostGenerationConfig()
         {
             this.AgentHeight = 2f;
-            this.CoverDistance = 0.7f;
+            this.CoverDistance = 1.5f;
             this.CoverPeakDistance = 0.8f;
-            this.CoverPostStepSize = 0.6f;
+            this.CoverPostStepSize = 2f;
         }
 
         /// <summary>
@@ -118,6 +118,33 @@ namespace KieranCoppins.PostNavigation
             return posts.ToArray();
         }
 
+        // Nav mesh triangulation has duplicated verticies - this makes edge walking difficult. We want to remove duplicate verticies and update triangle indicies accordingly
+        internal static Mesh RemoveDuplicatedIndicesFromNavMesh()
+        {
+            // Get the navmesh data from Unity's navmesh system
+            NavMeshTriangulation navmeshData = NavMesh.CalculateTriangulation();
+            Mesh mesh = new Mesh();
+
+            // Group verticies of the same coordinate via a string key
+            var uniqueVertices = navmeshData.vertices.GroupBy(v => v.ToString()).Select(g => g.First()).ToList();
+
+            // Store the same array but as strings - this makes the vertex lookup more stable due ot floating point precision
+            var uniqueVerticesString = uniqueVertices.Select(v => v.ToString()).ToList();
+
+            // Iterate through each index and update it to the index of the first vertex with the same coordinate
+            List<int> newIndices = new List<int>();
+            for (int i = 0; i < navmeshData.indices.Length; i++)
+            {
+                Vector3 vertex = navmeshData.vertices[navmeshData.indices[i]];
+                // The index inside the string variation will match in the vector3 version
+                newIndices.Add(uniqueVerticesString.IndexOf(vertex.ToString()));
+            }
+            mesh.SetVertices(uniqueVertices.ToArray());
+            mesh.SetIndices(newIndices, MeshTopology.Triangles, 0);
+
+            return mesh;
+        }
+
         /// <summary>
         /// Generates posts on the navmesh using the given configuration, this should not be done at runtime!
         /// </summary>
@@ -125,12 +152,12 @@ namespace KieranCoppins.PostNavigation
         /// <returns></returns>
         internal static IPost[] GenerateFromNavMesh(NavMeshPostGenerationConfig config)
         {
-            NavMeshTriangulation navmeshData = NavMesh.CalculateTriangulation();
-            Mesh mesh = new Mesh();
-            mesh.SetVertices(navmeshData.vertices.ToList());
-            mesh.SetIndices(navmeshData.indices, MeshTopology.Triangles, 0);
+            Mesh mesh = RemoveDuplicatedIndicesFromNavMesh();
 
             List<IPost> posts = new();
+
+            // Stores an array of edges where each edge is defined by two indices
+            List<int[]> edges = new();
 
             for (int i = 0; i < mesh.triangles.Length; i += 3)
             {
@@ -139,34 +166,53 @@ namespace KieranCoppins.PostNavigation
                 Vector3 B = mesh.vertices[mesh.triangles[i + 1]];
                 Vector3 C = mesh.vertices[mesh.triangles[i + 2]];
 
+                edges.Add(new int[2] { mesh.triangles[i], mesh.triangles[i + 1] });
+                edges.Add(new int[2] { mesh.triangles[i + 1], mesh.triangles[i + 2] });
+                edges.Add(new int[2] { mesh.triangles[i + 2], mesh.triangles[i] });
+
                 // Center of the triangle
                 Vector3 center = (A + B + C) / 3f;
 
                 // Create open posts at the center of each triangle in the navmesh
                 posts.Add(new InternalOpenPost(center));
+            }
 
-                // Walk around the edge of the triangle and use raycasts to determine if there is a wall
-                Vector3[] edgePoints = { A, B, C, A };
-                for (int j = 0; j < edgePoints.Length - 1; j++)
+            // Get all the outer edges of the navmesh - these are edges that are only ever references once,
+            // if an edge is used twice then it must be an internal edge of the mesh - this is why we had to remove
+            // duplicated vertices from the navmesh.
+            var outerEdges = edges
+                .GroupBy(x =>
                 {
-                    Vector3 interpPointA = edgePoints[j];
-                    Vector3 interpPointB = edgePoints[j + 1];
-                    Vector3 edgeVector = (interpPointB - interpPointA).normalized;
-
-                    Vector3 interpPoint = interpPointA;
-
-                    // Counter for saftey
-                    int counter = 0;
-
-                    // Interpolate between the two points at a given step size
-                    while (Vector3.Dot(edgeVector, (interpPointB - interpPoint).normalized) > 0 && counter < 100)
+                    if (x[0] < x[1])
                     {
-                        Vector3 rayDirection = Vector3.Cross(edgeVector, Vector3.up);
-                        CalculateCoverRaycast(in posts, interpPoint, rayDirection, config.CoverDistance, config.CoverPeakDistance, config.AgentHeight);
-                        CalculateCoverRaycast(in posts, interpPoint, -rayDirection, config.CoverDistance, config.CoverPeakDistance, config.AgentHeight);
-                        interpPoint += edgeVector * config.CoverPostStepSize;
-                        counter++;
+                        return $"{x[0]}, {x[1]}";
                     }
+                    return $"{x[1]}, {x[0]}";
+                })
+                .Where(x => !x.Skip(1).Any())
+                .Select(x => x.First())
+                .ToArray();
+
+            // Walk around the edge of the navmesh and create cover posts
+            for (int j = 0; j < outerEdges.Length - 1; j++)
+            {
+                Vector3 interpPointA = mesh.vertices[outerEdges[j][0]];
+                Vector3 interpPointB = mesh.vertices[outerEdges[j][1]];
+                Vector3 edgeVector = (interpPointB - interpPointA).normalized;
+
+                Vector3 interpPoint = interpPointA;
+
+                // Counter for saftey
+                int counter = 0;
+
+                // Interpolate between the two points at a given step size
+                while (Vector3.Dot(edgeVector, (interpPointB - interpPoint).normalized) > 0 && counter < 100)
+                {
+                    Vector3 rayDirection = Vector3.Cross(edgeVector, Vector3.up);
+                    CalculateCoverRaycast(in posts, interpPoint, rayDirection, config.CoverDistance, config.CoverPeakDistance, config.AgentHeight);
+                    CalculateCoverRaycast(in posts, interpPoint, -rayDirection, config.CoverDistance, config.CoverPeakDistance, config.AgentHeight);
+                    interpPoint += edgeVector * config.CoverPostStepSize;
+                    counter++;
                 }
             }
 
