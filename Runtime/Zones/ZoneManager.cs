@@ -127,7 +127,10 @@ namespace KieranCoppins.PostNavigation
             }
             else
             {
-                nextZone = Zones[currentZoneIndex + 1];
+                if (currentZoneIndex < Zones.Count - 1)
+                {
+                    nextZone = Zones[currentZoneIndex + 1];
+                }
             }
 
             if (zone != null)
