@@ -84,7 +84,7 @@ namespace KieranCoppins.PostNavigation
             return closestZone;
         }
 
-        public void RequestZone(Zone zone, IZoneableAgent agent)
+        public void RequestZone(Zone zone, IZoneableAgent agent, bool reverse = false)
         {
             if (zone == null) return;
 
@@ -97,7 +97,7 @@ namespace KieranCoppins.PostNavigation
 
             if (!AllZonesHaveMinimumAgents() || zone.CurrentAgents >= zone.MaxAgents)
             {
-                ShuffleAgent(zone);
+                ShuffleAgent(zone, reverse);
 
                 // Assign the agent to the zone
                 zone.AssignAgent(agent);
@@ -112,17 +112,29 @@ namespace KieranCoppins.PostNavigation
             }
         }
 
-        private void ShuffleAgent(Zone zone)
+        private void ShuffleAgent(Zone zone, bool reverse)
         {
             // Get the next zone in the list
             int currentZoneIndex = Zones.IndexOf(zone);
 
-            if (currentZoneIndex != Zones.Count - 1)
+            Zone nextZone = null;
+            if (reverse)
+            {
+                if (currentZoneIndex > 0)
+                {
+                    nextZone = Zones[currentZoneIndex - 1];
+                }
+            }
+            else
+            {
+                nextZone = Zones[currentZoneIndex + 1];
+            }
+
+            if (zone != null)
             {
                 // Move an agent in the zone being requested to the next zone
-                Zone nextZone = Zones[currentZoneIndex + 1];
                 IZoneableAgent agentInZone = zone.GetAgentInZone();
-                RequestZone(nextZone, agentInZone);
+                RequestZone(nextZone, agentInZone, reverse);
                 return;
             }
 
@@ -142,19 +154,42 @@ namespace KieranCoppins.PostNavigation
 
                 foreach (var zone in Zones)
                 {
+                    bool abort = false;
                     if (zone.CurrentAgents < zone.MinAgents)
                     {
                         // Shuffle agents backwards to fill the zone
                         int currentZoneIndex = Zones.IndexOf(zone);
 
+                        // Check if there is a zone that is not at minimum capacity, start at the lowest priority zone
+                        for (int i = Zones.Count - 1; i >= 0; i--)
+                        {
+                            Zone z = Zones[i];
+                            if (z.CurrentAgents > z.MinAgents)
+                            {
+                                // Shuffle back to bubble back to the zone that needs agents if the zone that has available
+                                // agents is ahead of the zone that is in crisis
+                                ShuffleAgent(z, i > currentZoneIndex);
+                                abort = true;
+                                break;
+                            }
+                        }
+
+                        if (abort) continue;
+
+                        // Everyone is at min capacity so pull from the lowest priority zone
                         if (currentZoneIndex < Zones.Count - 1)
                         {
-                            // Move an agent in the next zone to this zone
-                            Zone nextZone = Zones[currentZoneIndex + 1];
-                            IZoneableAgent agentInZone = nextZone.GetAgentInZone();
-                            if (agentInZone == null) break;
-                            RequestZone(zone, agentInZone);
-                            break;
+                            // Loop through the rest of the zones until we find an agent we can send back
+                            for (int i = currentZoneIndex + 1; i < Zones.Count; i++)
+                            {
+                                Zone nextZone = Zones[i];
+                                IZoneableAgent agentInZone = nextZone.GetAgentInZone();
+                                if (agentInZone != null)
+                                {
+                                    RequestZone(zone, agentInZone);
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
@@ -178,9 +213,9 @@ namespace KieranCoppins.PostNavigation
         /// The manager should also track the state of each zone and ensure that the minimum agents is always met
         /// If a zone at the start of the list (high priority) is below the minimum agents, then the manager should shuffle
         /// agents backwards to fill the zone, this should be the criteria for picking the starting agent
-        /// 1. Get the first zone in the list that has more than 1 the minimum agents, if one is found then send that agent back
-        /// 2. If we get to the last zone, then shuffle an agent from the last zone back
-        /// 3. If we get to a zone with 0 agents, then shuffle an agent from the previous zone back
+        /// 1. Get the first zone in the list that has less than the minimum agents, if one is found then send an agent in the zone forward back,
+        ///    if there are no agents in the next zone, then continue the loop until we find an agent to send back (or forward depending on which
+        ///    zone has ones to spare)
 
         /// The system should work kind of like a glass where if Zone B doesn't have the minimum agents, then Zone C should have 0 agents.
         /// That allows for some assumptions during our checks above
