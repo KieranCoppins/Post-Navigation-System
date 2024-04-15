@@ -38,7 +38,7 @@ namespace KieranCoppins.PostNavigation
         {
             this.AgentHeight = 2f;
             this.CoverDistance = 1.5f;
-            this.CoverPeakDistance = 1.4f;
+            this.CoverPeakDistance = 1f;
             this.CoverPostStepSize = .75f;
         }
 
@@ -320,7 +320,6 @@ namespace KieranCoppins.PostNavigation
         {
             Vector3 highCoverOffset = new Vector3(0, agentHeight * 0.75f, 0);
             Vector3 lowCoverOffset = new Vector3(0, agentHeight * 0.25f, 0);
-            Debug.DrawRay(point + lowCoverOffset, rayDirection * length, Color.red, 5);
             if (Physics.Raycast(point + lowCoverOffset, rayDirection, length))
             {
                 Vector3 coverDirection = Vector3.Cross(rayDirection, Vector3.up).normalized;

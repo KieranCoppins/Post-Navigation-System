@@ -11,35 +11,48 @@ namespace KieranCoppins.PostNavigation
     public class IsInCover : IPostRule
     {
         /// <summary>
-        /// The target to check cover against
+        /// The transform of the target we are taking cover from
         /// </summary>
         private readonly Transform target;
 
         /// <summary>
-        /// The dot product threshold to check against
+        /// The distance away an object can be concidered cover
         /// </summary>
-        private readonly float dot;
+        private readonly float distance;
+
+        /// <summary>
+        /// The amount to add to the post if it is in cover
+        /// </summary>
+        private readonly float weight;
+
+        /// <summary>
+        /// If the rule should remove posts that are not in cover
+        /// </summary>
+        private readonly bool destructive;
 
         /// <summary>
         /// Create a new IsInCover rule
         /// </summary>
         /// <param name="target">The target to check cover against</param>
         /// <param name="dot">The dot product threshold to check against</param>
-        public IsInCover(Transform target, float dot)
+        public IsInCover(Transform target, float distance = 2f, float weight = 1f, bool destructive = true)
         {
             this.target = target;
-            this.dot = dot;
+            this.distance = distance;
+            this.weight = weight;
+            this.destructive = destructive;
         }
 
         Dictionary<IPost, float> IPostRule.Run(Dictionary<IPost, float> scores)
         {
-            Dictionary<IPost, float> newScores = new Dictionary<IPost, float>();
+            Dictionary<IPost, float> newScores = destructive ? new() : new(scores);
             foreach (KeyValuePair<IPost, float> score in scores)
             {
-                Vector3 direction = target.position - score.Key.ToVector3();
-                if (score.Key is ICoverPost coverPost && Vector3.Dot(coverPost.CoverDirection.normalized, direction.normalized) > dot)
+                Vector3 direction = (target.position - score.Key.ToVector3()).normalized;
+                if (score.Key is ICoverPost && Physics.Raycast(score.Key.ToVector3() + (Vector3.up * 0.5f), direction, distance))
                 {
-                    newScores[score.Key] = scores[score.Key];
+                    Debug.DrawRay(score.Key.ToVector3() + (Vector3.up * 0.5f), direction * distance, Color.red, 5f);
+                    newScores[score.Key] = scores[score.Key] + weight;
                 }
             }
             return newScores;

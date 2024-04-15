@@ -49,11 +49,11 @@ namespace KieranCoppins.PostNavigation
             PostSelectorScores newScores = new(baseScores);
             foreach (KeyValuePair<IPost, float> score in baseScores)
             {
-                newScores[score.Key] = (
+                newScores[score.Key] = ((
                     NormaliseScore ?
                         -Mathf.InverseLerp(closestDistance, furthestDistance, score.Value)
                         : -score.Value
-                    ) * Weight;
+                    ) * Weight) + scores[score.Key];
             }
             return newScores;
         }

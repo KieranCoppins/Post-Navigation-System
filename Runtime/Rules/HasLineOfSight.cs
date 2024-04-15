@@ -20,21 +20,35 @@ namespace KieranCoppins.PostNavigation
         private readonly float heightOffset;
 
         /// <summary>
+        /// The amount to add to the post if has line of sight
+        /// </summary>
+        private readonly float weight;
+
+        /// <summary>
+        /// If the rule should remove posts that do not have line of sight
+        /// </summary>
+        private readonly bool destructive;
+
+
+
+        /// <summary>
         /// Create a new HasLineOfSight rule
         /// </summary>
         /// <param name="target">The target to check line of sight to</param>
         /// <param name="heightOffset">The height offset from the post position (usually on the ground) to apply to the raycast</param>
         /// <param name="weight">The weight of this rule, used to scale the score</param>
-        public HasLineOfSight(Transform target, float heightOffset)
+        public HasLineOfSight(Transform target, float heightOffset, float weight = 1f, bool destructive = true)
         {
             this.target = target;
             this.heightOffset = heightOffset;
+            this.weight = weight;
+            this.destructive = destructive;
         }
 
 
         Dictionary<IPost, float> IPostRule.Run(Dictionary<IPost, float> scores)
         {
-            Dictionary<IPost, float> newScores = new Dictionary<IPost, float>();
+            Dictionary<IPost, float> newScores = destructive ? new() : new(scores);
             foreach (KeyValuePair<IPost, float> score in scores)
             {
                 Vector3 direction = target.position - score.Key.ToVector3();
@@ -43,12 +57,12 @@ namespace KieranCoppins.PostNavigation
                 {
                     if (hit.transform == target)
                     {
-                        newScores[score.Key] = scores[score.Key];
+                        newScores[score.Key] = scores[score.Key] + weight;
                     }
                 }
                 else
                 {
-                    newScores[score.Key] = scores[score.Key];
+                    newScores[score.Key] = scores[score.Key] + weight;
                 }
             }
             return newScores;
