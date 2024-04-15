@@ -108,10 +108,17 @@ namespace KieranCoppins.PostNavigation
 
             if (!AllZonesHaveMinimumAgents() || zone.CurrentAgents >= zone.MaxAgents)
             {
-                ShuffleAgent(zone, reverse);
-
-                // Assign the agent to the zone
-                zone.AssignAgent(agent);
+                // Try to shuffle the agent
+                if (ShuffleAgent(zone, reverse))
+                {
+                    // If we succeeded we can go to this zone and an agent that was in that zone will move to one in need
+                    zone.AssignAgent(agent);
+                }
+                else
+                {
+                    // Otherwise we need to go to the one in need
+                    RequestZone(Zones.First(z => z.CurrentAgents < z.MinAgents), agent);
+                }
                 return;
             }
 
@@ -123,7 +130,7 @@ namespace KieranCoppins.PostNavigation
             }
         }
 
-        private void ShuffleAgent(Zone zone, bool reverse)
+        private bool ShuffleAgent(Zone zone, bool reverse)
         {
             // Get the next zone in the list
             int currentZoneIndex = Zones.IndexOf(zone);
@@ -148,12 +155,17 @@ namespace KieranCoppins.PostNavigation
             {
                 // Move an agent in the zone being requested to the next zone
                 IZoneableAgent agentInZone = zone.GetAgentInZone();
-                RequestZone(nextZone, agentInZone, reverse);
-                return;
+                if (agentInZone != null)
+                {
+                    RequestZone(nextZone, agentInZone, reverse);
+                    return true;
+                }
+                return false;
             }
 
             // If we are at the end of the zones log a warning
             Debug.LogWarning("No zones available to shuffle agents to, all zones are at maximum capacity.");
+            return false;
         }
 
         private bool AllZonesHaveMinimumAgents()
