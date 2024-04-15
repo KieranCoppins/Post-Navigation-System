@@ -15,9 +15,9 @@ namespace KieranCoppins.PostNavigation
             Handles.color = Color.red;
             // Add the first point to the end so that we draw a complete loop
             List<Vector3> zonePointsToDraw = new List<Vector3>(zone.ZonePoints)
-        {
-            zone.ZonePoints[0]
-        };
+            {
+                zone.ZonePoints[0]
+            };
 
             // Handles.DrawPolyLine(zonePointsToDraw.Select(p => zone.transform.TransformPoint(p)).ToArray());
 

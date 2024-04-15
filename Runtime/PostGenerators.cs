@@ -38,8 +38,8 @@ namespace KieranCoppins.PostNavigation
         {
             this.AgentHeight = 2f;
             this.CoverDistance = 1.5f;
-            this.CoverPeakDistance = 0.8f;
-            this.CoverPostStepSize = 2f;
+            this.CoverPeakDistance = 1.4f;
+            this.CoverPostStepSize = .75f;
         }
 
         /// <summary>
@@ -200,19 +200,36 @@ namespace KieranCoppins.PostNavigation
                 Vector3 interpPointB = mesh.vertices[outerEdges[j][1]];
                 Vector3 edgeVector = (interpPointB - interpPointA).normalized;
 
-                Vector3 interpPoint = interpPointA;
+                // Length of the edge
+                float edgeLength = Vector3.Distance(interpPointA, interpPointB);
 
-                // Counter for saftey
-                int counter = 0;
+                // How many points can we fit along this line?
+                int steps = Mathf.FloorToInt(edgeLength / config.CoverPostStepSize);
 
-                // Interpolate between the two points at a given step size
-                while (Vector3.Dot(edgeVector, (interpPointB - interpPoint).normalized) > 0 && counter < 100)
+                Vector3 rayDirection = Vector3.Cross(edgeVector, Vector3.up);
+
+                // If we cant even fit one cover on the line just ignore it, it must be a short edge
+                if (steps == 0)
                 {
-                    Vector3 rayDirection = Vector3.Cross(edgeVector, Vector3.up);
-                    CalculateCoverRaycast(in posts, interpPoint, rayDirection, config.CoverDistance, config.CoverPeakDistance, config.AgentHeight);
-                    CalculateCoverRaycast(in posts, interpPoint, -rayDirection, config.CoverDistance, config.CoverPeakDistance, config.AgentHeight);
-                    interpPoint += edgeVector * config.CoverPostStepSize;
-                    counter++;
+                    continue;
+                }
+
+                // If we can only fit less than 3 points on the line then just place one in the center
+                if (steps < 3)
+                {
+                    Vector3 point = (interpPointA + interpPointB) / 2;
+                    CalculateCoverRaycast(in posts, point, rayDirection, config.CoverDistance, config.CoverPeakDistance, config.AgentHeight);
+                    CalculateCoverRaycast(in posts, point, -rayDirection, config.CoverDistance, config.CoverPeakDistance, config.AgentHeight);
+                }
+                else
+                {
+                    // We want to ignore the last as it'll be the first for a different edge
+                    for (int step = 0; step < steps; step++)
+                    {
+                        Vector3 point = interpPointA + (edgeVector * (step * config.CoverPostStepSize));
+                        CalculateCoverRaycast(in posts, point, rayDirection, config.CoverDistance, config.CoverPeakDistance, config.AgentHeight);
+                        CalculateCoverRaycast(in posts, point, -rayDirection, config.CoverDistance, config.CoverPeakDistance, config.AgentHeight);
+                    }
                 }
             }
 
@@ -301,8 +318,9 @@ namespace KieranCoppins.PostNavigation
 
         private static void CalculateCoverRaycast(in List<IPost> currentPosts, Vector3 point, Vector3 rayDirection, float length, float peakWidth, float agentHeight)
         {
-            Vector3 highCoverOffset = agentHeight * 0.75f * Vector3.up;
-            Vector3 lowCoverOffset = agentHeight * 0.25f * Vector3.up;
+            Vector3 highCoverOffset = new Vector3(0, agentHeight * 0.75f, 0);
+            Vector3 lowCoverOffset = new Vector3(0, agentHeight * 0.25f, 0);
+            Debug.DrawRay(point + lowCoverOffset, rayDirection * length, Color.red, 5);
             if (Physics.Raycast(point + lowCoverOffset, rayDirection, length))
             {
                 Vector3 coverDirection = Vector3.Cross(rayDirection, Vector3.up).normalized;
