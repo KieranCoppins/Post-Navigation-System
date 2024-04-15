@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +12,7 @@ namespace KieranCoppins.PostNavigation
     /// </summary>
     public class OpenPost : MonoBehaviour, IOpenPost, ICustomPost
     {
+        public object OccupiedBy { get; set; }
         Vector3 IPost.Position { get => transform.position; set => transform.position = value; }
 
         public IPost ToSerializableObject() => new InternalOpenPost(transform.position);

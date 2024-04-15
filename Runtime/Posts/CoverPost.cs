@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,6 +17,8 @@ namespace KieranCoppins.PostNavigation
         Vector3 ICoverPost.CoverDirection { get => transform.forward; set => transform.forward = value; }
         bool ICoverPost.CanPeakLeft { get => canPeakLeft; set => canPeakLeft = value; }
         bool ICoverPost.CanPeakRight { get => canPeakRight; set => canPeakRight = value; }
+        public object OccupiedBy { get; set; }
+
 
         [SerializeField] private CoverType coverType;
         [SerializeField] private bool canPeakLeft;

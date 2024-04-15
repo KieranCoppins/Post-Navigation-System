@@ -15,11 +15,6 @@ namespace KieranCoppins.PostNavigation
         /// </summary>
         private readonly Type postType;
 
-        float IPostRule.Weight { get => weight; set => weight = value; }
-        private float weight;
-        bool IPostRule.NormaliseScore { get => normaliseScore; set => normaliseScore = value; }
-        private bool normaliseScore;
-
         /// <summary>
         /// Create a new IsOfPostType rule
         /// </summary>
@@ -31,19 +26,15 @@ namespace KieranCoppins.PostNavigation
 
         Dictionary<IPost, float> IPostRule.Run(Dictionary<IPost, float> scores)
         {
-            Dictionary<IPost, float> baseScores = new Dictionary<IPost, float>();
+
+
+            Dictionary<IPost, float> newScores = new Dictionary<IPost, float>();
             foreach (KeyValuePair<IPost, float> score in scores)
             {
                 if (score.Key.GetType() == postType)
                 {
-                    baseScores[score.Key] = weight;
+                    newScores[score.Key] = scores[score.Key];
                 }
-            }
-
-            Dictionary<IPost, float> newScores = new Dictionary<IPost, float>();
-            foreach (KeyValuePair<IPost, float> score in baseScores)
-            {
-                newScores[score.Key] = score.Value + scores[score.Key];
             }
             return newScores;
         }

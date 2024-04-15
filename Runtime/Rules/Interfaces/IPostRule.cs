@@ -11,16 +11,6 @@ namespace KieranCoppins.PostNavigation
     /// </summary>
     public interface IPostRule
     {
-        /// <summary>
-        /// The weight of this rule, used to scale the score
-        /// </summary>
-        protected float Weight { get; set; }
-
-        /// <summary>
-        /// Whether to normalise the score of this rule
-        /// </summary>
-        protected bool NormaliseScore { get; set; }
-
         public PostSelectorScores Run(PostSelectorScores scores);
     }
 }

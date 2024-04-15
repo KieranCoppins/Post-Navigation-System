@@ -11,18 +11,16 @@ namespace KieranCoppins.PostNavigation
     /// </summary>
     public class DistanceToTarget : IPostRule
     {
-        float IPostRule.Weight { get => weight; set => weight = value; }
-        private float weight;
 
-        bool IPostRule.NormaliseScore { get => normaliseScore; set => normaliseScore = value; }
-        private bool normaliseScore;
+        protected float Weight { get; set; }
+        protected bool NormaliseScore { get; set; }
         private readonly Transform target;
 
         public DistanceToTarget(Transform target, float weight, bool normaliseScore)
         {
             this.target = target;
-            this.weight = weight;
-            this.normaliseScore = normaliseScore;
+            Weight = weight;
+            NormaliseScore = normaliseScore;
         }
 
 
@@ -52,10 +50,10 @@ namespace KieranCoppins.PostNavigation
             foreach (KeyValuePair<IPost, float> score in baseScores)
             {
                 newScores[score.Key] = (
-                    normaliseScore ?
+                    NormaliseScore ?
                         -Mathf.InverseLerp(closestDistance, furthestDistance, score.Value)
                         : -score.Value
-                    ) * weight;
+                    ) * Weight;
             }
             return newScores;
         }

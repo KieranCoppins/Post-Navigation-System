@@ -19,29 +19,22 @@ namespace KieranCoppins.PostNavigation
         /// </summary>
         private readonly float heightOffset;
 
-        float IPostRule.Weight { get => weight; set => weight = value; }
-        private float weight;
-        bool IPostRule.NormaliseScore { get => normaliseScore; set => normaliseScore = value; }
-        private bool normaliseScore;
-
         /// <summary>
         /// Create a new HasLineOfSight rule
         /// </summary>
         /// <param name="target">The target to check line of sight to</param>
         /// <param name="heightOffset">The height offset from the post position (usually on the ground) to apply to the raycast</param>
         /// <param name="weight">The weight of this rule, used to scale the score</param>
-        public HasLineOfSight(Transform target, float heightOffset, float weight)
+        public HasLineOfSight(Transform target, float heightOffset)
         {
             this.target = target;
             this.heightOffset = heightOffset;
-            this.weight = weight;
-            this.normaliseScore = false;
         }
 
 
         Dictionary<IPost, float> IPostRule.Run(Dictionary<IPost, float> scores)
         {
-            Dictionary<IPost, float> baseScores = new Dictionary<IPost, float>();
+            Dictionary<IPost, float> newScores = new Dictionary<IPost, float>();
             foreach (KeyValuePair<IPost, float> score in scores)
             {
                 Vector3 direction = target.position - score.Key.ToVector3();
@@ -50,19 +43,13 @@ namespace KieranCoppins.PostNavigation
                 {
                     if (hit.transform == target)
                     {
-                        baseScores[score.Key] = weight;
+                        newScores[score.Key] = scores[score.Key];
                     }
                 }
                 else
                 {
-                    baseScores[score.Key] = weight;
+                    newScores[score.Key] = scores[score.Key];
                 }
-            }
-
-            Dictionary<IPost, float> newScores = new Dictionary<IPost, float>();
-            foreach (KeyValuePair<IPost, float> score in baseScores)
-            {
-                newScores[score.Key] = score.Value + scores[score.Key];
             }
             return newScores;
         }

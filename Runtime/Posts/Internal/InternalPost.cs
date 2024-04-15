@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,6 +14,8 @@ namespace KieranCoppins.PostNavigation
     internal class InternalPost : IPost
     {
         Vector3 IPost.Position { get => position; set => position = value; }
+
+        public object OccupiedBy { get; set; }
 
         [SerializeField] private Vector3 position;
 

@@ -11,7 +11,7 @@ namespace KieranCoppins.PostNavigation
         public List<Vector3> ZonePoints { get => zonePoints; set => zonePoints = value; }
         [SerializeField] private float height = 3f;
 
-        public List<IPost> Posts { get; set; } = new List<IPost>();
+        public List<IPost> Posts { get; private set; } = new();
 
         [Header("Zone Properties")]
         [Tooltip("The zone manager will ensure that every zone's minimum agents is always met.")]
@@ -107,6 +107,11 @@ namespace KieranCoppins.PostNavigation
             agent.AssignedZone = null;
         }
 
+        public IPost[] PostsInZone()
+        {
+            return Posts.ToArray();
+        }
+
         void OnDrawGizmos()
         {
             // Create a mesh for the zone
@@ -147,7 +152,7 @@ namespace KieranCoppins.PostNavigation
             zoneMesh.RecalculateNormals();
 
 
-            Gizmos.color = Color.red;
+            Gizmos.color = Color.magenta;
             Gizmos.DrawWireMesh(zoneMesh, transform.position, Quaternion.identity);
 
             // Draw a sphere at the last point so we know which one is the end

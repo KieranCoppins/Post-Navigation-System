@@ -11,8 +11,7 @@ namespace KieranCoppins.PostNavigation
     {
         public static ZoneManager Instance { get; private set; }
 
-        public List<Zone> Zones { get => zones; private set => zones = value; }
-        [SerializeField] List<Zone> zones;
+        public List<Zone> Zones { get; private set; }
         [SerializeField] Vector3 combatVector = Vector3.forward;
 
         private List<IZoneableAgent> agents = new List<IZoneableAgent>();
@@ -51,6 +50,18 @@ namespace KieranCoppins.PostNavigation
             });
 
             Zones = new List<Zone>(zonesInScene);
+
+            // Assign posts to each zone
+            foreach (var zone in Zones)
+            {
+                foreach (var post in PostManager.Instance.Posts)
+                {
+                    if (zone.IsPointInZone(post.Position))
+                    {
+                        zone.Posts.Add(post);
+                    }
+                }
+            }
 
             // Get all agents in the scene
             foreach (var rootObject in gameObjects)
