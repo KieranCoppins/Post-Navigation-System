@@ -6,9 +6,9 @@ namespace KieranCoppins.PostNavigation
 {
     public class IsNotOccupied : IPostRule
     {
-        private object self;
+        private IPostAgent self;
 
-        public IsNotOccupied(object self)
+        public IsNotOccupied(IPostAgent self)
         {
             this.self = self;
         }
@@ -18,7 +18,7 @@ namespace KieranCoppins.PostNavigation
             Dictionary<IPost, float> newScores = new Dictionary<IPost, float>();
             foreach (KeyValuePair<IPost, float> score in scores)
             {
-                if (score.Key.OccupiedBy == null || score.Key.OccupiedBy == self)
+                if (PostManager.Instance.IsPostOccupiedBy(score.Key, self) || !PostManager.Instance.IsPostOccupied(score.Key))
                 {
                     newScores[score.Key] = scores[score.Key];
                 }

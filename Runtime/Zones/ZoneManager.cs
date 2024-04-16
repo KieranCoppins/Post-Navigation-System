@@ -14,8 +14,6 @@ namespace KieranCoppins.PostNavigation
         public List<Zone> Zones { get; private set; }
         [SerializeField] Vector3 combatVector = Vector3.forward;
 
-        private List<IZoneableAgent> agents = new List<IZoneableAgent>();
-
         void Awake()
         {
             if (Instance != null && Instance != this)
@@ -63,12 +61,6 @@ namespace KieranCoppins.PostNavigation
                 }
             }
 
-            // Get all agents in the scene
-            foreach (var rootObject in gameObjects)
-            {
-                agents.AddRange(rootObject.GetComponentsInChildren<IZoneableAgent>());
-            }
-
             StartCoroutine(CheckZoneStates());
         }
 
@@ -77,7 +69,7 @@ namespace KieranCoppins.PostNavigation
         /// </summary>
         /// <param name="agent"></param>
         /// <returns></returns>
-        public Zone GetClosestZoneToAgent(IZoneableAgent agent)
+        public Zone GetClosestZoneToAgent(IPostAgent agent)
         {
             float dst = float.MaxValue;
             Zone closestZone = null;
@@ -95,7 +87,7 @@ namespace KieranCoppins.PostNavigation
             return closestZone;
         }
 
-        public void RequestZone(Zone zone, IZoneableAgent agent, bool reverse = false)
+        public void RequestZone(Zone zone, IPostAgent agent, bool reverse = false)
         {
             if (zone == null) return;
 
@@ -154,7 +146,7 @@ namespace KieranCoppins.PostNavigation
             if (zone != null)
             {
                 // Move an agent in the zone being requested to the next zone
-                IZoneableAgent agentInZone = zone.GetAgentInZone();
+                IPostAgent agentInZone = zone.GetAgentInZone();
                 if (agentInZone != null)
                 {
                     RequestZone(nextZone, agentInZone, reverse);
@@ -209,7 +201,7 @@ namespace KieranCoppins.PostNavigation
                             for (int i = currentZoneIndex + 1; i < Zones.Count; i++)
                             {
                                 Zone nextZone = Zones[i];
-                                IZoneableAgent agentInZone = nextZone.GetAgentInZone();
+                                IPostAgent agentInZone = nextZone.GetAgentInZone();
                                 if (agentInZone != null)
                                 {
                                     RequestZone(zone, agentInZone);

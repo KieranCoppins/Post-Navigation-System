@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace KieranCoppins.PostNavigation
 {
-    public interface IZoneableAgent
+    public interface IPostAgent
     {
         public Vector3 Position { get; }
         /// <summary>

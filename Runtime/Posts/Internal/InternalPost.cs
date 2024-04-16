@@ -15,8 +15,6 @@ namespace KieranCoppins.PostNavigation
     {
         Vector3 IPost.Position { get => position; set => position = value; }
 
-        public object OccupiedBy { get; set; }
-
         [SerializeField] private Vector3 position;
 
         public InternalPost(Vector3 position)

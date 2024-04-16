@@ -9,7 +9,6 @@ namespace KieranCoppins.PostNavigation
     internal class InternalOpenPost : IOpenPost
     {
         Vector3 IPost.Position { get => position; set => position = value; }
-        public object OccupiedBy { get; set; }
 
         [SerializeField] private Vector3 position;
 

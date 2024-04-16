@@ -15,11 +15,6 @@ namespace KieranCoppins.PostNavigation
         /// </summary>
         public Vector3 Position { get; protected set; }
 
-        /// <summary>
-        /// The object that is currently occupying the post
-        /// </summary>
-        public object OccupiedBy { get; set; }
-
         public Vector3 ToVector3() => Position;
     }
 }

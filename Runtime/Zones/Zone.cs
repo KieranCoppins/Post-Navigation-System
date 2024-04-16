@@ -24,7 +24,7 @@ namespace KieranCoppins.PostNavigation
 
         public int CurrentAgents { get => agentsInZone.Count; }
 
-        List<IZoneableAgent> agentsInZone = new List<IZoneableAgent>();
+        List<IPostAgent> agentsInZone = new List<IPostAgent>();
 
         [SerializeField]
         private List<Vector3> zonePoints = new List<Vector3>()
@@ -69,14 +69,14 @@ namespace KieranCoppins.PostNavigation
             return intersectCount % 2 == 1;
         }
 
-        public IZoneableAgent GetAgentInZone()
+        public IPostAgent GetAgentInZone()
         {
             if (agentsInZone.Count == 0) return null;
 
             return agentsInZone[0];
         }
 
-        public void AssignAgent(IZoneableAgent agent)
+        public void AssignAgent(IPostAgent agent)
         {
             if (CurrentAgents >= MaxAgents)
             {
@@ -101,7 +101,7 @@ namespace KieranCoppins.PostNavigation
             }
         }
 
-        public void RemoveAgent(IZoneableAgent agent)
+        public void RemoveAgent(IPostAgent agent)
         {
             agentsInZone.Remove(agent);
             agent.AssignedZone = null;

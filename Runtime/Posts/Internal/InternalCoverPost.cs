@@ -16,7 +16,6 @@ namespace KieranCoppins.PostNavigation
         Vector3 ICoverPost.CoverDirection { get => coverDirection; set => coverDirection = value; }
         bool ICoverPost.CanPeakLeft { get => canPeakLeft; set => canPeakLeft = value; }
         bool ICoverPost.CanPeakRight { get => canPeakRight; set => canPeakRight = value; }
-        public object OccupiedBy { get; set; }
 
         [SerializeField] private Vector3 position;
         [SerializeField] private CoverType coverType;
