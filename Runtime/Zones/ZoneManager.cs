@@ -27,7 +27,7 @@ namespace KieranCoppins.PostNavigation
         /// zones at the back of the combat vector have a higher "priority". Note that this does not override zone's
         /// minimum agent requirements.
         /// </summary>
-        [SerializeField, Tool] Vector3 combatVector = Vector3.forward;
+        [SerializeField, Tooltip("The vector that determines the combat direction, this is used to determine the priority of zones")] Vector3 combatVector = Vector3.forward;
 
         /// <summary>
         /// A dictionary that maps agents to the zones they are assigned to
