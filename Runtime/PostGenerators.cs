@@ -145,6 +145,19 @@ namespace KieranCoppins.PostNavigation
             return mesh;
         }
 
+        internal static IPost[] GetMonobehaviourPosts()
+        {
+            List<IPost> posts = new();
+
+            // Add any custom posts to the list
+            GameObject[] gameObjects = SceneManager.GetActiveScene().GetRootGameObjects();
+            foreach (var rootObject in gameObjects)
+            {
+                posts.AddRange(rootObject.GetComponentsInChildren<IPost>());
+            }
+            return posts.ToArray();
+        }
+
         /// <summary>
         /// Generates posts on the navmesh using the given configuration, this should not be done at runtime!
         /// </summary>
@@ -231,13 +244,6 @@ namespace KieranCoppins.PostNavigation
                         CalculateCoverRaycast(in posts, point, -rayDirection, config.CoverDistance, config.CoverPeakDistance, config.AgentHeight);
                     }
                 }
-            }
-
-            // Add any custom posts to the list
-            GameObject[] gameObjects = SceneManager.GetActiveScene().GetRootGameObjects();
-            foreach (var rootObject in gameObjects)
-            {
-                posts.AddRange(rootObject.GetComponentsInChildren<ICustomPost>().Select(customPost => customPost.ToSerializableObject()));
             }
 
             return posts.ToArray();

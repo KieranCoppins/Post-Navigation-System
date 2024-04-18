@@ -10,10 +10,8 @@ namespace KieranCoppins.PostNavigation
     /// 
     /// Allows for a game designer to manually place an open post
     /// </summary>
-    public class OpenPost : MonoBehaviour, IOpenPost, ICustomPost
+    public class OpenPost : MonoBehaviour, IOpenPost
     {
         Vector3 IPost.Position { get => transform.position; set => transform.position = value; }
-
-        public IPost ToSerializableObject() => new InternalOpenPost(transform.position);
     }
 }

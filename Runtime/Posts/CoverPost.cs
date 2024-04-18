@@ -10,7 +10,7 @@ namespace KieranCoppins.PostNavigation
     /// 
     /// Allows for a game designer to manually place a cover post
     /// </summary>
-    public class CoverPost : MonoBehaviour, ICoverPost, ICustomPost
+    public class CoverPost : MonoBehaviour, ICoverPost
     {
         Vector3 IPost.Position { get => transform.position; set => transform.position = value; }
         CoverType ICoverPost.CoverType { get => coverType; set => coverType = value; }
@@ -21,7 +21,5 @@ namespace KieranCoppins.PostNavigation
         [SerializeField] private CoverType coverType;
         [SerializeField] private bool canPeakLeft;
         [SerializeField] private bool canPeakRight;
-
-        public IPost ToSerializableObject() => new InternalCoverPost(transform.position, coverType, transform.forward, canPeakLeft, canPeakRight);
     }
 }

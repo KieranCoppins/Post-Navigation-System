@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace KieranCoppins.PostNavigation
@@ -10,7 +11,7 @@ namespace KieranCoppins.PostNavigation
         /// <summary>
         /// The posts in the data
         /// </summary>
-        public IPost[] Posts { get => posts.ToArray(); }
+        public IPost[] Posts { get => posts.Concat(PostGenerators.GetMonobehaviourPosts()).ToArray(); }
 
         [SerializeReference] private List<IPost> posts;
 
