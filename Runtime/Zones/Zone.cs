@@ -22,10 +22,6 @@ namespace KieranCoppins.PostNavigation
         public int MaxAgents { get => maxAgents; }
         [SerializeField] private int maxAgents = 0;
 
-        public int CurrentAgents { get => agentsInZone.Count; }
-
-        List<IPostAgent> agentsInZone = new List<IPostAgent>();
-
         [SerializeField]
         private List<Vector3> zonePoints = new List<Vector3>()
     {
@@ -67,49 +63,6 @@ namespace KieranCoppins.PostNavigation
 
             // If the number of intersections is odd, the point is inside the polygon
             return intersectCount % 2 == 1;
-        }
-
-        public IPostAgent GetAgentInZone()
-        {
-            if (agentsInZone.Count == 0) return null;
-
-            return agentsInZone[0];
-        }
-
-        public void AssignAgent(IPostAgent agent)
-        {
-            if (CurrentAgents >= MaxAgents)
-            {
-                Debug.LogWarning("Zone is at maximum capacity, cannot assign agent.");
-                return;
-            }
-
-            if (agent.AssignedZone != null)
-            {
-                agent.AssignedZone.RemoveAgent(agent);
-            }
-
-            agentsInZone.Add(agent);
-            agent.AssignedZone = this;
-            agent.OnAssignedZone(this);
-
-            // Check if the agent is a monobehaviour
-            if (agent is MonoBehaviour monoBehaviour)
-            {
-                // If it is then subscribe to the destroy event, so that we dont have to in the Zoneable agent impl
-                monoBehaviour.destroyCancellationToken.Register(() => RemoveAgent(agent));
-            }
-        }
-
-        public void RemoveAgent(IPostAgent agent)
-        {
-            agentsInZone.Remove(agent);
-            agent.AssignedZone = null;
-        }
-
-        public IPost[] PostsInZone()
-        {
-            return Posts.ToArray();
         }
 
         void OnDrawGizmos()

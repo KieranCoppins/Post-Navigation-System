@@ -6,13 +6,41 @@ using UnityEngine.SceneManagement;
 
 namespace KieranCoppins.PostNavigation
 {
-
+    // Does this need to be a monobehaviour? Yes we want to use unity's coroutine system
     public class ZoneManager : MonoBehaviour
     {
         public static ZoneManager Instance { get; private set; }
 
         public List<Zone> Zones { get; private set; }
         [SerializeField] Vector3 combatVector = Vector3.forward;
+        private Dictionary<IPostAgent, Zone> assignedZones = new();
+
+        public void AssignAgentToZone(IPostAgent agent, Zone zone)
+        {
+            if (!assignedZones.ContainsKey(agent) && agent is MonoBehaviour monoBehaviour)
+            {
+                // If we are a monobehaviour then linked to the ondestroy event
+                monoBehaviour.destroyCancellationToken.Register(() => { assignedZones.Remove(agent); });
+            }
+            assignedZones[agent] = zone;
+            agent.OnAssignedZone?.Invoke(zone);
+        }
+
+        public IPostAgent[] GetAgentsInZone(Zone zone)
+        {
+            // This is o(n) where n is agents in the scene but there wont be a lot of agents
+            return assignedZones.Where(kvp => kvp.Value == zone).Select(kvp => kvp.Key).ToArray();
+        }
+
+        public IPost[] GetPostsForAgent(IPostAgent agent)
+        {
+            if (assignedZones.ContainsKey(agent))
+            {
+                return assignedZones[agent].Posts.ToArray();
+            }
+
+            return new IPost[0];
+        }
 
         void Awake()
         {
@@ -75,7 +103,7 @@ namespace KieranCoppins.PostNavigation
             Zone closestZone = null;
             foreach (var zone in Zones)
             {
-                if (agent.AssignedZone == zone) continue;
+                if (assignedZones.ContainsKey(agent) && assignedZones[agent] == zone) continue;
 
                 float newDst = Vector3.Distance(agent.Position, zone.transform.position);
                 if (newDst < dst)
@@ -91,33 +119,35 @@ namespace KieranCoppins.PostNavigation
         {
             if (zone == null) return;
 
-            if (zone.CurrentAgents < zone.MinAgents)
+            int currentAgents = GetAgentsInZone(zone).Length;
+
+            if (currentAgents < zone.MinAgents)
             {
                 // Assign the agent to the zone
-                zone.AssignAgent(agent);
+                AssignAgentToZone(agent, zone);
                 return;
             }
 
-            if (!AllZonesHaveMinimumAgents() || zone.CurrentAgents >= zone.MaxAgents)
+            if (!AllZonesHaveMinimumAgents() || currentAgents >= zone.MaxAgents)
             {
                 // Try to shuffle the agent
                 if (ShuffleAgent(zone, reverse))
                 {
                     // If we succeeded we can go to this zone and an agent that was in that zone will move to one in need
-                    zone.AssignAgent(agent);
+                    AssignAgentToZone(agent, zone);
                 }
                 else
                 {
                     // Otherwise we need to go to the one in need
-                    RequestZone(Zones.First(z => z.CurrentAgents < z.MinAgents), agent);
+                    RequestZone(Zones.First(z => currentAgents < z.MinAgents), agent);
                 }
                 return;
             }
 
-            if (zone.CurrentAgents < zone.MaxAgents)
+            if (currentAgents < zone.MaxAgents)
             {
                 // Assign the agent to the zone
-                zone.AssignAgent(agent);
+                AssignAgentToZone(agent, zone);
                 return;
             }
         }
@@ -146,7 +176,7 @@ namespace KieranCoppins.PostNavigation
             if (zone != null)
             {
                 // Move an agent in the zone being requested to the next zone
-                IPostAgent agentInZone = zone.GetAgentInZone();
+                IPostAgent agentInZone = GetAgentsInZone(zone).FirstOrDefault();
                 if (agentInZone != null)
                 {
                     RequestZone(nextZone, agentInZone, reverse);
@@ -162,7 +192,11 @@ namespace KieranCoppins.PostNavigation
 
         private bool AllZonesHaveMinimumAgents()
         {
-            return Zones.All(zone => zone.CurrentAgents >= zone.MinAgents);
+            return Zones.All(zone =>
+            {
+                var currentAgents = GetAgentsInZone(zone).Length;
+                return currentAgents >= zone.MinAgents;
+            });
         }
 
         private IEnumerator CheckZoneStates()
@@ -172,8 +206,9 @@ namespace KieranCoppins.PostNavigation
 
                 foreach (var zone in Zones)
                 {
+                    int currentAgents = GetAgentsInZone(zone).Length;
                     bool abort = false;
-                    if (zone.CurrentAgents < zone.MinAgents)
+                    if (currentAgents < zone.MinAgents)
                     {
                         // Shuffle agents backwards to fill the zone
                         int currentZoneIndex = Zones.IndexOf(zone);
@@ -182,7 +217,8 @@ namespace KieranCoppins.PostNavigation
                         for (int i = Zones.Count - 1; i >= 0; i--)
                         {
                             Zone z = Zones[i];
-                            if (z.CurrentAgents > z.MinAgents)
+                            int zCurrentAgents = GetAgentsInZone(z).Length;
+                            if (zCurrentAgents > z.MinAgents)
                             {
                                 // Shuffle back to bubble back to the zone that needs agents if the zone that has available
                                 // agents is ahead of the zone that is in crisis
@@ -201,7 +237,7 @@ namespace KieranCoppins.PostNavigation
                             for (int i = currentZoneIndex + 1; i < Zones.Count; i++)
                             {
                                 Zone nextZone = Zones[i];
-                                IPostAgent agentInZone = nextZone.GetAgentInZone();
+                                IPostAgent agentInZone = GetAgentsInZone(nextZone).FirstOrDefault();
                                 if (agentInZone != null)
                                 {
                                     RequestZone(zone, agentInZone);
