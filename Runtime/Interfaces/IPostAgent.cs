@@ -10,7 +10,11 @@ namespace KieranCoppins.PostNavigation
     /// </summary>
     public interface IPostAgent
     {
+        /// <summary>
+        /// The position of the agent
+        /// </summary>
         public Vector3 Position { get; }
+
         /// <summary>
         /// Called when the zone manager assigns this agent to a zone
         /// </summary>
