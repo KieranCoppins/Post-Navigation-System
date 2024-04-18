@@ -6,15 +6,39 @@ using UnityEngine.SceneManagement;
 
 namespace KieranCoppins.PostNavigation
 {
-    // Does this need to be a monobehaviour? Yes we want to use unity's coroutine system
+    /// <summary>
+    /// A singleton monobehaviour that manages all the zones in the scene. It assigns agents to zones and keeps track of the state of each zone
+    /// ensuring that the minimum agents are always met and the maximum agents are not exceeded.
+    /// </summary>
     public class ZoneManager : MonoBehaviour
     {
+        /// <summary>
+        /// The singleton instance of the zone manager
+        /// </summary>
         public static ZoneManager Instance { get; private set; }
 
+        /// <summary>
+        /// All the zones in the scene
+        /// </summary>
         public List<Zone> Zones { get; private set; }
-        [SerializeField] Vector3 combatVector = Vector3.forward;
+
+        /// <summary>
+        /// The vector that determines the combat direction, this is used to determine the priority of zones where
+        /// zones at the back of the combat vector have a higher "priority". Note that this does not override zone's
+        /// minimum agent requirements.
+        /// </summary>
+        [SerializeField, Tool] Vector3 combatVector = Vector3.forward;
+
+        /// <summary>
+        /// A dictionary that maps agents to the zones they are assigned to
+        /// </summary>
         private Dictionary<IPostAgent, Zone> assignedZones = new();
 
+        /// <summary>
+        /// Assigns an agent to a zone
+        /// </summary>
+        /// <param name="agent">The agent to assign</param>
+        /// <param name="zone">The zone to assign to</param>
         public void AssignAgentToZone(IPostAgent agent, Zone zone)
         {
             if (!assignedZones.ContainsKey(agent) && agent is MonoBehaviour monoBehaviour)
@@ -26,12 +50,23 @@ namespace KieranCoppins.PostNavigation
             agent.OnAssignedZone?.Invoke(zone);
         }
 
+        /// <summary>
+        /// Gets all the agents within a zone
+        /// </summary>
+        /// <param name="zone">The zone to get all agents from</param>
+        /// <returns>An array of IPostAgents that are assigned to the given zone</returns>
         public IPostAgent[] GetAgentsInZone(Zone zone)
         {
             // This is o(n) where n is agents in the scene but there wont be a lot of agents
             return assignedZones.Where(kvp => kvp.Value == zone).Select(kvp => kvp.Key).ToArray();
         }
 
+        /// <summary>
+        /// Gets posts for an agent from their assigned zone. If they are not assigned to a zone
+        /// returns an empty array
+        /// </summary>
+        /// <param name="agent">The agent to get posts for</param>
+        /// <returns>An array of all the posts within the zone the agent is assigned to</returns>
         public IPost[] GetPostsForAgent(IPostAgent agent)
         {
             if (assignedZones.ContainsKey(agent))
@@ -95,8 +130,8 @@ namespace KieranCoppins.PostNavigation
         /// <summary>
         /// Gets the closest zone to the agent that isnt the zone they are currently in
         /// </summary>
-        /// <param name="agent"></param>
-        /// <returns></returns>
+        /// <param name="agent">The agent to get the zone for</param>
+        /// <returns>The zone closest to the agent that isn't the zone they are assigned to</returns>
         public Zone GetClosestZoneToAgent(IPostAgent agent)
         {
             float dst = float.MaxValue;
@@ -115,6 +150,12 @@ namespace KieranCoppins.PostNavigation
             return closestZone;
         }
 
+        /// <summary>
+        /// Requests the zone for the given agent
+        /// </summary>
+        /// <param name="zone">The zone that is being requested</param>
+        /// <param name="agent">The agent requesting the zone</param>
+        /// <param name="reverse">Controls if agents should "shuffle" up or down the combat vector</param>
         public void RequestZone(Zone zone, IPostAgent agent, bool reverse = false)
         {
             if (zone == null) return;
@@ -152,6 +193,12 @@ namespace KieranCoppins.PostNavigation
             }
         }
 
+        /// <summary>
+        /// Shuffles an agent from the given zone to the next zone in the list
+        /// </summary>
+        /// <param name="zone">The zone to shuffle an agent from</param>
+        /// <param name="reverse">Controls if agents should "shuffle" up or down the combat vector</param>
+        /// <returns>If shuffling the agent was successful. It can fail if theres no agents to shuffle</returns>
         private bool ShuffleAgent(Zone zone, bool reverse)
         {
             // Get the next zone in the list
@@ -190,6 +237,10 @@ namespace KieranCoppins.PostNavigation
             return false;
         }
 
+        /// <summary>
+        /// Checks if all the zones in the manager have the minimum agents
+        /// </summary>
+        /// <returns>True if all agents have the minimum zones</returns>
         private bool AllZonesHaveMinimumAgents()
         {
             return Zones.All(zone =>
@@ -199,6 +250,10 @@ namespace KieranCoppins.PostNavigation
             });
         }
 
+        /// <summary>
+        /// A coroutine that checks the state of each zone in the scene and ensures that the
+        /// minimum and maximum agents are met
+        /// </summary>
         private IEnumerator CheckZoneStates()
         {
             while (true)

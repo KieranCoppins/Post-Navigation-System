@@ -6,32 +6,53 @@ using UnityEngine;
 
 namespace KieranCoppins.PostNavigation
 {
+    /// <summary>
+    /// A component to define a zone within the scene. This is used to assign agents to zones
+    /// </summary>
     public class Zone : MonoBehaviour
     {
+        /// <summary>
+        /// The points that define the zone. The zone is defined by a closed loop of points
+        /// </summary>
         public List<Vector3> ZonePoints { get => zonePoints; set => zonePoints = value; }
-        [SerializeField] private float height = 3f;
 
+        /// <summary>
+        /// The height of the zone, any points that are above or below the zones height are not included in the zone
+        /// </summary>
+        [SerializeField, Tooltip("The height of the zone, any points that are above or below the zones height are not included in the zone")] private float height = 3f;
+
+        /// <summary>
+        /// The posts that are in this zone
+        /// </summary>
         public List<IPost> Posts { get; private set; } = new();
 
-        [Header("Zone Properties")]
-        [Tooltip("The zone manager will ensure that every zone's minimum agents is always met.")]
+        /// <summary>
+        /// The minimum number of agents that should be in this zone
+        /// </summary>
         public int MinAgents { get => minAgents; }
-        [SerializeField] private int minAgents = 0;
+        [SerializeField, Tooltip("The minimum number of agents that should be in this zone")] private int minAgents = 0;
 
-        [Tooltip("The zone manager will ensure that every zone's maximum agents is never exceeded.")]
+        /// <summary>
+        /// The maximum number of agents that should be in this zone
+        /// </summary>
         public int MaxAgents { get => maxAgents; }
-        [SerializeField] private int maxAgents = 0;
+        [SerializeField, Tooltip("The maximum number of agents that should be in this zone")] private int maxAgents = 0;
 
-        [SerializeField]
+        [SerializeField, Tooltip("The points that define the zone. The zone is defined by a closed loop of points")]
         private List<Vector3> zonePoints = new List<Vector3>()
-    {
-        // Define a square zone as default
-        new Vector3(-1, 0, -1),
-        new Vector3(1, 0, -1),
-        new Vector3(1, 0, 1),
-        new Vector3(-1, 0, 1)
-    };
+        {
+            // Define a square zone as default
+            new Vector3(-1, 0, -1),
+            new Vector3(1, 0, -1),
+            new Vector3(1, 0, 1),
+            new Vector3(-1, 0, 1)
+        };
 
+        /// <summary>
+        /// Checks if a point is inside the zone
+        /// </summary>
+        /// <param name="point">The point to check if its in the zone</param>
+        /// <returns>True if the point is in the zone</returns>
         public bool IsPointInZone(Vector3 point)
         {
             // Height check is fast so do this first before moving onto the ray-casting algorithm

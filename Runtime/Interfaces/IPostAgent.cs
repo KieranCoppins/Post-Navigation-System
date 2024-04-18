@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace KieranCoppins.PostNavigation
 {
+    /// <summary>
+    /// An interface that all agents that use posts or zones should implement
+    /// </summary>
     public interface IPostAgent
     {
         public Vector3 Position { get; }

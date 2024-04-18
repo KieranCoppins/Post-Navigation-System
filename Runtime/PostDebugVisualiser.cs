@@ -7,7 +7,8 @@ using UnityEngine.AI;
 namespace KieranCoppins.PostNavigation
 {
     /// <summary>
-    /// A debug tool to allow visualising posts in the scene view
+    /// A debug tool to allow visualising posts in the scene view, only shows serialized posts in post data. Does not show
+    /// monobehaviour posts placed in the scene
     /// </summary>
     [ExecuteInEditMode]
     public class PostDebugVisualiser : MonoBehaviour

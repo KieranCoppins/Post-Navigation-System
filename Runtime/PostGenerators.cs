@@ -145,6 +145,10 @@ namespace KieranCoppins.PostNavigation
             return mesh;
         }
 
+        /// <summary>
+        /// Gets all the posts in the scene that are monobehaviours
+        /// </summary>
+        /// <returns>An array of IPosts that are monobehaviours in the active scene</returns>
         internal static IPost[] GetMonobehaviourPosts()
         {
             List<IPost> posts = new();
@@ -162,7 +166,7 @@ namespace KieranCoppins.PostNavigation
         /// Generates posts on the navmesh using the given configuration, this should not be done at runtime!
         /// </summary>
         /// <param name="config">The configuration for this post generation</param>
-        /// <returns></returns>
+        /// <returns>An array of IPosts that have been generated from the navmesh</returns>
         internal static IPost[] GenerateFromNavMesh(NavMeshPostGenerationConfig config)
         {
             Mesh mesh = RemoveDuplicatedIndicesFromNavMesh();
@@ -321,6 +325,7 @@ namespace KieranCoppins.PostNavigation
 
             return areaPBC * A.y + areaPCA * B.y + areaPAB * C.y;
         }
+
 
         private static void CalculateCoverRaycast(in List<IPost> currentPosts, Vector3 point, Vector3 rayDirection, float length, float peakWidth, float agentHeight)
         {

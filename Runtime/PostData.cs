@@ -5,7 +5,10 @@ using UnityEngine;
 
 namespace KieranCoppins.PostNavigation
 {
-    [System.Serializable]
+    /// <summary>
+    /// A serializable data object that contains all the posts in the scene. This is created and populated by
+    /// the post generators
+    /// </summary>
     internal class PostData : ScriptableObject
     {
         /// <summary>
