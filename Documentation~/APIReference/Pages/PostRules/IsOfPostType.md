@@ -1,0 +1,5 @@
+# IsOfPostType
+
+## Properties
+
+## Public Methods

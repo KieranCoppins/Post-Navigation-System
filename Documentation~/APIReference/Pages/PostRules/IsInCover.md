@@ -1,0 +1,5 @@
+# IsInCover
+
+## Properties
+
+## Public Methods

@@ -1,0 +1,5 @@
+# IPostRule
+
+## Properties
+
+## Public Methods

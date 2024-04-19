@@ -1,0 +1,5 @@
+# IPost
+
+## Properties
+
+## Public Methods

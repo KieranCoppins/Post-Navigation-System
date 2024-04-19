@@ -1,0 +1,5 @@
+# HasLineOfSight
+
+## Properties
+
+## Public Methods

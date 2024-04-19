@@ -1,0 +1,5 @@
+# IsNotOccupied
+
+## Properties
+
+## Public Methods
