@@ -98,7 +98,7 @@ namespace KieranCoppins.PostNavigation
         /// <param name="radius">The radius from the origin for post generation</param>
         /// <param name="postSpacing">The spacing between each post within the radius</param>
         /// <returns></returns>
-        public static IPost[] GenerateCircle(Vector3 origin, float radius, int postSpacing)
+        public static IPost[] GenerateCircle(Vector3 origin, float radius, float postSpacing)
         {
             List<IPost> posts = new();
 

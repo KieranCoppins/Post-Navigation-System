@@ -1,6 +1,5 @@
 # Post Navigation System API Reference Docs
 
-### Interfaces
 | Class | Description |
 |-----------|-------------|
 | [`CoverPost`][CoverPost] | A monobehaviour implementation of [`ICoverPost`][ICoverPost]. Allows game designers to place open posts in the level. |

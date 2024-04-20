@@ -9,8 +9,8 @@
         "name": "Kieran Coppins",
         "url": "https://kierancoppins.com"
     },
-    "repository": "foo",
+    "repository": "https://github.com/KieranCoppins/Post-Navigation-System",
     "changelogUrl": "foo",
     "documentationUrl": "foo",
-    "licensesUrl": "foo"
+    "licensesUrl": "https://github.com/KieranCoppins/Post-Navigation-System/blob/main/LICENSE"
 }
