@@ -1,7 +1,7 @@
 # ICoverPost
 
 ### Definition
-Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*ICoverPost.cs*]() | Inherits: [*`IPost`*]()
+Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*ICoverPost.cs*](../../../../Runtime/Posts/Interfaces/ICoverPost.cs) | Inherits: [*`IPost`*](../../../../Runtime/Posts/Interfaces/IPost.cs)
 
 An interface that every cover post implements. Contains data relevant for cover posts.
 

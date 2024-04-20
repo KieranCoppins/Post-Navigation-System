@@ -1,7 +1,7 @@
 # IPostRule
 
 ### Definition
-Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*IPostRule.cs*]()
+Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*IPostRule.cs*](../../../../Runtime/Rules/Interfaces/IPostRule.cs)
 
 The post rule interface. Every post selector rule must implement this interface.
 

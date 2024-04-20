@@ -1,7 +1,7 @@
 # PostManager
 
 ### Definition
-Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*PostManager.cs*]()
+Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*PostManager.cs*](../../../Runtime/PostManager.cs)
 
 A singleton class that manages all the posts in the scene, it is responsable for keeping a reference to all posts and which posts are occupied by IPostAgents.
 

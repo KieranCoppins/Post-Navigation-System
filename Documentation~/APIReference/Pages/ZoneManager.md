@@ -1,7 +1,7 @@
 # ZoneManager
 
 ### Definition
-Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*ZoneManager.cs*]() | Inherits: *`Monobehaviour`*
+Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*ZoneManager.cs*](../../../Runtime/Zones/ZoneManager.cs) | Inherits: *`Monobehaviour`*
 
 A singleton monobehaviour that manages all the zones in the scene. It assigns agents to zones and keeps track of the state of each zone ensuring that the minimum agents are always met and the maximum agents are not exceeded.
 

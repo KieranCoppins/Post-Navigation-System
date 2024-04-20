@@ -1,7 +1,7 @@
 # Zone
 
 ### Definition
-Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*Zone.cs*]() | Inherits: *`Monobehaviour`*
+Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*Zone.cs*](../../../Runtime/Zones/Zone.cs) | Inherits: *`Monobehaviour`*
 
 Zones are a polygonal area that a game designer can draw. Any posts within the zone's area will be part of the zone. Agents can be assigned to zones and therefore have their post selection limited to posts within the zone. They have a minimum and maximum agent count that a game designer can tweak to make the AI behave how they want. A `ZoneManager` is required when using zones in your level.
 

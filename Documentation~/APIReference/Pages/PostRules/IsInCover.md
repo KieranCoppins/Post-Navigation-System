@@ -1,7 +1,7 @@
 # IsInCover
 
 ### Definition
-Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*IsInCover.cs*]() | Implements: [*`IPostRule`*]()
+Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*IsInCover.cs*](../../../../Runtime/Rules/IsInCover.cs) | Implements: [*`IPostRule`*](../../../../Runtime/Rules/Interfaces/IPostRule.cs)
 
 Checks if the post is in cover from the given target transform's position. This rule can be destructive and remove posts from consideration from next rules if the post is not in cover.
 

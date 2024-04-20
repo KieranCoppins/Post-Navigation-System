@@ -1,7 +1,7 @@
 # PostSelector
 
 ### Definition
-Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*PostSelector.cs*]()
+Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*PostSelector.cs*](../../../Runtime/PostSelector.cs)
 
 A post selector takes a list of rules and an array of posts to run the rules on, it will iterate through each rule and apply the weighting the rule adds and returns the final dictionary of posts to weights.
 

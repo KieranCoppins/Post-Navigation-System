@@ -1,7 +1,7 @@
 # IsOfPostType
 
 ### Definition
-Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*IsOfPostType.cs*]() | Implements: [*`IPostRule`*]()
+Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*IsOfPostType.cs*](../../../../Runtime/Rules/IsOfPostType.cs) | Implements: [*`IPostRule`*](../../../../Runtime/Rules/Interfaces/IPostRule.cs)
 
 Checks if the post is derived from the given type. This rule is always destructive and will remove posts from consideration if they do not derive the given type.
 

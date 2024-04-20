@@ -1,7 +1,7 @@
 # DistanceToTarget
 
 ### Definition
-Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*DistanceToTarget.cs*]() | Implements: [*`IPostRule`*]()
+Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*DistanceToTarget.cs*](../../../../Runtime/Rules/DistanceToTarget.cs) | Implements: [*`IPostRule`*](../../../../Runtime/Rules/Interfaces/IPostRule.cs)
 
 Calculates the distance of each post from the target transform's position and weights each post accordingly. The weighting can be normalised so that extreme distances are not affected. The distance check is as the crow flies so path cost is not taken into account.
 

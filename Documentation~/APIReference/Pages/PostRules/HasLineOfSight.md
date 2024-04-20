@@ -1,7 +1,7 @@
 # HasLineOfSight
 
 ### Definition
-Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*HasLineOfSight.cs*]() | Implements: [*`IPostRule`*]()
+Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*HasLineOfSight.cs*](../../../../Runtime/Rules/HasLineOfSight.cs) | Implements: [*`IPostRule`*](../../../../Runtime/Rules/Interfaces/IPostRule.cs)
 
 Casts a raycast from each post in the post selector to the target transform's position. This rule can be destructive and remove posts from consideration from next rules if the post does not have line of sight.
 

@@ -1,7 +1,7 @@
 # PostGenerators
 
 ### Definition
-Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*PostGenerators.cs*]()
+Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*PostGenerators.cs*](../../../Runtime/PostGenerators.cs)
 
 A static class containing a series of functions related to generating or reading posts.
 

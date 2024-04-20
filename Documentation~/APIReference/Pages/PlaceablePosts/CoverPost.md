@@ -1,7 +1,7 @@
 # CoverPost
 
 ### Definition
-Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*CoverPost.cs*]() | Inherits: *`Monobehaviour`* | Implements: [*`ICoverPost`*]()
+Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*CoverPost.cs*](../../../../Runtime/Posts/CoverPost.cs) | Inherits: *`Monobehaviour`* | Implements: [*`ICoverPost`*](../../../../Runtime/Posts/Interfaces/ICoverPost.cs)
 
 A game component that represents a cover post. The post manager will automatically read these posts at run time and incude them in its post data.
 

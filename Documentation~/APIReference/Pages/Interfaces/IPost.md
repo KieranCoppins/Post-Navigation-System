@@ -1,7 +1,7 @@
 # IPost
 
 ### Definition
-Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*IPost.cs*]()
+Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*IPost.cs*](../../../../Runtime/Posts/Interfaces/IPost.cs)
 
 An interface that every post must implement.
 

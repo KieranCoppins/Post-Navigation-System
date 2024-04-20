@@ -1,7 +1,7 @@
 # IPostAgent
 
 ### Definition
-Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*IPostAgent.cs*]()
+Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*IPostAgent.cs*](../../../../Runtime/Interfaces/IPostAgent.cs)
 
 An interface that every agent in the game that uses posts or zones should implement.
 

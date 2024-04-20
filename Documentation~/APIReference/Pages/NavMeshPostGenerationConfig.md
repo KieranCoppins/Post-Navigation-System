@@ -1,7 +1,7 @@
 # NavMeshPostGenerationConfig
 
 ### Definition
-Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*PostGenerators.cs*]()
+Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*PostGenerators.cs*](../../../Runtime/PostGenerators.cs)
 
 ### Variables
 | Accessor | Type | Name | Description |

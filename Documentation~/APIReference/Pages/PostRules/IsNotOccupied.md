@@ -1,7 +1,7 @@
 # IsNotOccupied
 
 ### Definition
-Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*IsNotOccupied.cs*]() | Implements: [*`IPostRule`*]()
+Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*IsNotOccupied.cs*](../../../../Runtime/Rules/IsNotOccupied.cs) | Implements: [*`IPostRule`*](../../../../Runtime/Rules/Interfaces/IPostRule.cs)
 
 Checks if the post is currently occupied by any agent that isnt the agent passed in the constructor. This rule is always destructive and will remove posts from consideration if they are occupied.
 
