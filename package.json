@@ -10,7 +10,6 @@
         "url": "https://kierancoppins.com"
     },
     "repository": "https://github.com/KieranCoppins/Post-Navigation-System",
-    "changelogUrl": "foo",
-    "documentationUrl": "foo",
+    "documentationUrl": "https://github.com/KieranCoppins/Post-Navigation-System/tree/main/Documentation~",
     "licensesUrl": "https://github.com/KieranCoppins/Post-Navigation-System/blob/main/LICENSE"
 }
