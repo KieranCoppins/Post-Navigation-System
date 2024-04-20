@@ -12,7 +12,7 @@ namespace KieranCoppins.PostNavigation
     /// </summary>
     public class NavMeshPostGenerationMonodevelop : MonoBehaviour
     {
-        [MenuItem("Tools/Navigation/Generate Posts For NavMesh")]
+        [MenuItem("Tools/Navigation/Generate Posts From NavMesh")]
         private static void GeneratePostsForNavMesh()
         {
             IPost[] posts = PostGenerators.GenerateFromNavMesh(new NavMeshPostGenerationConfig());
