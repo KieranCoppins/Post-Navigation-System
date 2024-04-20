@@ -51,8 +51,8 @@ namespace KieranCoppins.PostNavigation
             Dictionary<IPost, float> newScores = destructive ? new() : new(scores);
             foreach (KeyValuePair<IPost, float> score in scores)
             {
-                Vector3 direction = target.position - score.Key.ToVector3();
-                Ray ray = new Ray(score.Key.ToVector3() + Vector3.up * heightOffset, direction);
+                Vector3 direction = target.position - score.Key.Position;
+                Ray ray = new Ray(score.Key.Position + Vector3.up * heightOffset, direction);
                 if (Physics.Raycast(ray, out RaycastHit hit, direction.magnitude))
                 {
                     if (hit.transform == target)

@@ -1,5 +1,6 @@
 # IOpenPost
 
-## Properties
+### Definition
+Namespace: *`KieranCoppins.PostNavigation`* | Assembly: *kierancoppins.post-navigation.dll* | Source: [*IOpenPost.cs*]() | Inherits: [*`IPost`*]()
 
-## Public Methods
+An interface that every open post implements.

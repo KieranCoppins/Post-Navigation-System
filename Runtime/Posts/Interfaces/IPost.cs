@@ -14,7 +14,5 @@ namespace KieranCoppins.PostNavigation
         /// The position of the post
         /// </summary>
         public Vector3 Position { get; protected set; }
-
-        public Vector3 ToVector3() => Position;
     }
 }

@@ -32,7 +32,7 @@ namespace KieranCoppins.PostNavigation
             float closestDistance = Mathf.Infinity;
             foreach (KeyValuePair<IPost, float> score in scores)
             {
-                float dist = Vector3.Distance(target.position, score.Key.ToVector3());
+                float dist = Vector3.Distance(target.position, score.Key.Position);
                 if (dist > furthestDistance)
                 {
                     furthestDistance = dist;
