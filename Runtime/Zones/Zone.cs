@@ -17,7 +17,7 @@ namespace KieranCoppins.PostNavigation
         public List<Vector3> ZonePoints { get => zonePoints; set => zonePoints = value; }
 
         /// <summary>
-        /// The height of the zone, any points that are above or below the zones height are not included in the zone
+        /// The height of the zone, any posts that are above or below the zones height are not included in the zone
         /// </summary>
         [SerializeField, Tooltip("The height of the zone, any points that are above or below the zones height are not included in the zone")] private float height = 3f;
 

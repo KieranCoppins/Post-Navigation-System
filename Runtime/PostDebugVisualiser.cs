@@ -28,14 +28,14 @@ namespace KieranCoppins.PostNavigation
                 if (post is IOpenPost openPost)
                 {
                     Gizmos.color = Color.green;
-                    Gizmos.DrawSphere(openPost.ToVector3(), 0.1f);
+                    Gizmos.DrawSphere(openPost.Position, 0.1f);
                 }
                 else if (post is ICoverPost coverPost)
                 {
                     Gizmos.color = Color.red;
-                    Gizmos.DrawCube(post.ToVector3(), new Vector3(.2f, 2f, .2f));
+                    Gizmos.DrawCube(post.Position, new Vector3(.2f, 2f, .2f));
                     Gizmos.color = Color.magenta;
-                    Vector3 coverRayOrigin = post.ToVector3() + Vector3.up;
+                    Vector3 coverRayOrigin = post.Position + Vector3.up;
                     Vector3 coverDirection = Vector3.Cross(coverPost.CoverDirection, Vector3.up);
                     Gizmos.DrawRay(coverRayOrigin, coverPost.CoverDirection);
                     if (coverPost.CanPeakLeft)
@@ -53,7 +53,7 @@ namespace KieranCoppins.PostNavigation
                 else
                 {
                     Gizmos.color = Color.white;
-                    Gizmos.DrawSphere(post.ToVector3(), 0.1f);
+                    Gizmos.DrawSphere(post.Position, 0.1f);
                 }
             }
         }
